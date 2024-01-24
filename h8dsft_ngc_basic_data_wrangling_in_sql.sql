@@ -1,38 +1,41 @@
-BEGIN;
 
 CREATE TABLE customers (
-    id SERIAL PRIMARY KEY,
-    customer_id int,
-	customer_name VARCHAR(50),
+    customer_id SERIAL PRIMARY KEY,
+    customer_name VARCHAR(50),
     city VARCHAR(20)
 );
 
-INSERT INTO customers (customer_name, city)
-VALUES
-      ('John Doe', 'New York'),
-      ('Jane Smith', 'Los Angeles'),
-      ('David Johnson', 'Chicago');
-	  
+
 CREATE TABLE orders (
-	id SERIAL PRIMARY KEY,
-	order_id int,
-	customer_id int,
-	order_date DATE,
-	total_amount FLOAT	
+    order_id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES customers(customer_id),
+    order_date DATE NOT NULL,
+    total_amount FLOAT
 );
 
-INSERT INTO orders (order_id, customer_id, order_date, total_amount)
-VALUES
-	(1, 1,'2022-01-10', 100.00),
-	(2, 1,'2022-02-15', 150.00),
-	(3, 2,'2022-03-20', 200.00),
-	(4, 3,'2022-04-25', 150.00);
 
+INSERT INTO Customers (customer_name, city)
+VALUES
+    ('John Doe', 'New York'),
+    ('Jane Smith', 'Los Angeles'),
+    ('David Johnson', 'Chicago');
+
+
+INSERT INTO Orders (customer_id, order_date, total_amount)
+VALUES
+    (1,'2022-01-10', 100.00),
+	(1,'2022-02-15', 150.00),
+	(2,'2022-03-20', 200.00),
+	(3,'2022-04-25', 150.00);
+	
 SELECT *
 FROM customers ;
-
 
 SELECT *
 FROM orders ;
 
-COMMIT
+
+SELECT customer_name, COUNT(order_id) AS total_orders
+FROM customers 
+LEFT JOIN orders ON customers.customer_id = orders.customer_id
+GROUP BY customers.customer_id, customers.customer_name;
